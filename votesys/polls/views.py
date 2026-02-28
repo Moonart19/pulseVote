@@ -1,5 +1,6 @@
 from django.db.models import F
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import generic
@@ -38,6 +39,7 @@ class ResultView(generic.DetailView):
   model = Question
   template_name = "polls/results.html"
 
+@login_required
 def vote(request, question_id):
   question = get_object_or_404(Question, pk=question_id)
   try:

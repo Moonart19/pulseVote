@@ -20,10 +20,14 @@
     <li><a href="https://moonart19.github.io/etch-a-sketch">Wanna Sketch?</a></li>
     <li><a href="{% url 'polls:index' %}" class="nav-cta">Go to Polls</a></li>
   </ul>
+  <form class="logout-form" method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button class="logout-btn" type="submit">⏻ Logout</button>
+  </form>     
 </nav>
 
-<main>
 
+<main>
   <!-- HERO -->
   <div class="hero">
     <div class="hero-glass">

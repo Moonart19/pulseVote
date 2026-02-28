@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — VoteSys</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="card">
+
+  <div class="brand">
+    <div class="brand-logo">Pulse<span>Vote</span></div>
+    <div class="brand-tagline">Your voice, your vote</div>
+  </div>
+
+  <h2>Welcome back</h2>
+  <p class="subtitle">Sign in to continue to your dashboard</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="submit-btn" type="submit">Sign In →</button>
+  </form>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-text">or</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <p class="footer-link">
+    Don't have an account? <a href="{% url 'register' %}">Create one</a>
+  </p>
+
+</div>
+
+</body>
+</html>

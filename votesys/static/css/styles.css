@@ -668,3 +668,32 @@ footer p {
 }
 
 .stat-value.accent { color: var(--accent); }
+
+.logout-form {
+  margin: 0;
+}
+
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #6b7a8d;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(.16,1,.3,1);
+}
+
+.logout-btn:hover {
+  background: rgba(231, 76, 60, 0.08);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+  box-shadow: 0 0 20px rgba(231, 76, 60, 0.15);
+}
