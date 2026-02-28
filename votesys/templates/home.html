@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PulseVote — Live Democracy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Pulse<span>Vote</span></div>
+  <ul class="nav-links">
+    <li><a href="https://moonart19.github.io/rock-paper-scissors">Play Rock-Paper-Scissors</a></li>
+    <li><a href="#trending">Trending</a></li>
+    <li><a href="https://moonart19.github.io/etch-a-sketch">Wanna Sketch?</a></li>
+    <li><a href="{% url 'polls:index' %}" class="nav-cta">Go to Polls</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-glass">
+
+      <!-- SOCIAL PROOF BADGE -->
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        <span class="counter" id="vote-counter">1,240</span>&nbsp;VOTES CAST TODAY
+      </div>
+
+      <p class="hero-eyebrow">Anonymous · Real-time · Trusted</p>
+
+      <h1>Your Voice,<br><em>Amplified.</em></h1>
+
+      <p class="hero-sub">
+        Instant polling with zero friction. No account, no bias — just pure collective intelligence surfacing in real time.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#trending" class="btn btn-primary">
+          Explore Polls <span class="btn-icon">→</span>
+        </a>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value accent counter" id="poll-count">4,820</div>
+          <div class="stat-label">Active Polls</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value counter" id="user-count">312K</div>
+          <div class="stat-label">Monthly Voters</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value counter" id="country-count">94</div>
+          <div class="stat-label">Countries</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- WHY SECTION -->
+  <section id="why">
+    <p class="section-label reveal">Why PulseVote</p>
+    <h2 class="section-title reveal">Built different,<br>by design.</h2>
+
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon icon-green">🔒</div>
+        <h3>Full Anonymity</h3>
+        <p>Your vote is private and end-to-end encrypted. We never store personal identifiers — only patterns, never people.</p>
+        <span class="feature-tag tag-green">Zero Tracking</span>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon icon-blue">⚡</div>
+        <h3>Real-time Results</h3>
+        <p>Watch the consensus form live. Results stream instantly as votes are cast — no refresh needed, no delays, no deception.</p>
+        <span class="feature-tag tag-blue">Live Updates</span>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon icon-gold">✦</div>
+        <h3>Radical Simplicity</h3>
+        <p>No account required. One click, one vote. We've removed every possible barrier between your opinion and the world hearing it.</p>
+        <span class="feature-tag tag-gold">Frictionless</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider" style="max-width:1200px;margin:0 auto;"></div>
+
+  <!-- TRENDING POLLS -->
+  <section id="trending">
+    <p class="section-label reveal">Trending Now</p>
+    <h2 class="section-title reveal">What the world<br>is deciding today.</h2>
+
+    <div class="polls-grid">
+
+      <div class="poll-card reveal reveal-delay-1">
+        <div class="poll-number">01</div>
+        <div class="poll-rank"><div class="poll-rank-dot"></div>Trending #1</div>
+        <div class="poll-question">What is the primary cause of academic burnout today?</div>
+        <div class="poll-bar"><div class="poll-bar-fill" style="width:78%"></div></div>
+        <div class="poll-meta" style="margin-top:16px">
+          <div class="poll-votes">
+            <span class="votes-count">38,291</span>
+            <span>votes</span>
+          </div>
+          <a href="{% url 'polls:index' %}" class="vote-btn">Vote ↗</a>
+        </div>
+      </div>
+
+      <div class="poll-card reveal reveal-delay-2">
+        <div class="poll-number">02</div>
+        <div class="poll-rank"><div class="poll-rank-dot"></div>Trending #2</div>
+        <div class="poll-question">Which teaching style produces the best learning outcomes?</div>
+        <div class="poll-bar"><div class="poll-bar-fill" style="width:62%"></div></div>
+        <div class="poll-meta" style="margin-top:16px">
+          <div class="poll-votes">
+            <span class="votes-count">24,857</span>
+            <span>votes</span>
+          </div>
+          <a href="{% url 'polls:index' %}" class="vote-btn">Vote ↗</a>
+        </div>
+      </div>
+
+      <div class="poll-card reveal reveal-delay-3">
+        <div class="poll-number">03</div>
+        <div class="poll-rank"><div class="poll-rank-dot"></div>Trending #3</div>
+        <div class="poll-question">Should AI tools like ChatGPT be integrated into assignments or banned entirely?</div>
+        <div class="poll-bar"><div class="poll-bar-fill" style="width:51%"></div></div>
+        <div class="poll-meta" style="margin-top:16px">
+          <div class="poll-votes">
+            <span class="votes-count">19,443</span>
+            <span>votes</span>
+          </div>
+          <a href="{% url 'polls:index' %}" class="vote-btn">Vote ↗</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:48px;" class="reveal">
+      <a href="#" class="btn btn-secondary" style="display:inline-flex">
+         <span class="btn-icon">→</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Pulse<span>Vote</span></div>
+  <p>© 2026 PulseVote. Encrypted. Anonymous. Open.</p>
+  <p style="font-size:0.75rem;color:#3b4a5a;">Privacy · Terms · API</p>
+</footer>
+
+<!-- SCROLL INDICATOR -->
+<div class="scroll-indicator" id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <span class="scroll-text">Scroll</span>
+</div>
+
+<script>
+  // ── SCROLL REVEAL ──
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ── SCROLL INDICATOR HIDE ──
+  const scrollInd = document.getElementById('scroll-indicator');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) scrollInd.classList.add('hidden');
+    else scrollInd.classList.remove('hidden');
+  });
+
+  // ── LIVE VOTE COUNTER ANIMATION ──
+  function animateCounter(el, target, duration = 1800) {
+    const startTime = performance.now();
+    const startVal = 0;
+    const update = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(startVal + (target - startVal) * ease);
+      if (el.id === 'vote-counter') {
+        el.textContent = current.toLocaleString();
+      } else if (el.id === 'user-count') {
+        el.textContent = current >= 1000 ? (current / 1000).toFixed(0) + 'K' : current;
+      } else {
+        el.textContent = current.toLocaleString();
+      }
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  window.addEventListener('load', () => {
+    setTimeout(() => animateCounter(document.getElementById('vote-counter'), 1240), 600);
+    setTimeout(() => animateCounter(document.getElementById('poll-count'), 4820), 700);
+    setTimeout(() => animateCounter(document.getElementById('user-count'), 312), 800);
+    setTimeout(() => animateCounter(document.getElementById('country-count'), 94), 900);
+  });
+
+  // ── LIVE TICK ── add 1 vote every few seconds for realism
+  setInterval(() => {
+    const el = document.getElementById('vote-counter');
+    const current = parseInt(el.textContent.replace(/,/g, '')) || 1240;
+    el.textContent = (current + 1).toLocaleString();
+  }, 4200);
+</script>
+</body>
+</html>

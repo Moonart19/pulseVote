@@ -1,0 +1,278 @@
+/* ============================================
+   POLLS — Premium CSS
+   Aesthetic: Dark luxury editorial
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --bg: #0c0c0f;
+  --surface: #13131a;
+  --surface-2: #1c1c28;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 200, 100, 0.35);
+  --gold: #d4a84b;
+  --gold-light: #f0c96a;
+  --gold-glow: rgba(212, 168, 75, 0.15);
+  --text-primary: #f0ece4;
+  --text-secondary: #8a8799;
+  --text-muted: #4a4859;
+  --accent: #d4a84b;
+  --radius: 2px;
+  --transition: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1.5rem 4rem;
+
+  /* Subtle noise texture */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 168, 75, 0.08), transparent),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+/* ── Page Header ── */
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  text-align: center;
+  margin-top: clamp(3rem, 8vh, 6rem);
+  margin-bottom: 0.5rem;
+  line-height: 1.1;
+  animation: fadeDown 0.9s var(--transition) both;
+
+  /* Subtle shimmer on the title */
+  background: linear-gradient(135deg, #f0ece4 30%, var(--gold-light) 60%, #f0ece4 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeDown 0.9s var(--transition) both, shimmer 5s linear 1s infinite;
+}
+
+h1::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 1px;
+  background: var(--gold);
+  margin: 1rem auto 0;
+  opacity: 0.6;
+  animation: expandLine 1s var(--transition) 0.3s both;
+}
+
+/* ── Home Link ── */
+h2 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: clamp(2.5rem, 6vh, 4.5rem);
+  animation: fadeUp 0.8s var(--transition) 0.3s both;
+}
+
+.home-page {
+  color: var(--text-secondary);
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+  transition: color var(--transition);
+}
+
+.home-page::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: width var(--transition);
+}
+
+.home-page:hover {
+  color: var(--gold-light);
+}
+
+.home-page:hover::after {
+  width: 100%;
+}
+
+/* ── Container ── */
+.container {
+  width: 100%;
+  max-width: 680px;
+  animation: fadeUp 0.9s var(--transition) 0.5s both;
+}
+
+/* ── Poll List ── */
+.link-container {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03),
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 80px var(--gold-glow);
+}
+
+.link-container li {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+  animation: slideIn 0.5s var(--transition) both;
+}
+
+/* Stagger each list item */
+.link-container li:nth-child(1) { animation-delay: 0.55s; }
+.link-container li:nth-child(2) { animation-delay: 0.65s; }
+.link-container li:nth-child(3) { animation-delay: 0.75s; }
+.link-container li:nth-child(4) { animation-delay: 0.85s; }
+.link-container li:nth-child(5) { animation-delay: 0.95s; }
+.link-container li:nth-child(n+6) { animation-delay: 1.05s; }
+
+.link-container li:last-child {
+  border-bottom: none;
+}
+
+.link-container li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--gold);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform var(--transition);
+}
+
+.link-container li:hover::before {
+  transform: scaleY(1);
+  transform-origin: top;
+}
+
+.link-container li:hover {
+  background: var(--surface-2);
+}
+
+.link-container li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.3rem 1.8rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.98rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  transition: color var(--transition), padding-left var(--transition);
+}
+
+.link-container li a::after {
+  content: '→';
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  transition: color var(--transition), transform var(--transition);
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.link-container li a:hover {
+  color: var(--gold-light);
+  padding-left: 2.2rem;
+}
+
+.link-container li a:hover::after {
+  color: var(--gold);
+  transform: translateX(4px);
+}
+
+/* ── Empty State ── */
+.container > p {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  padding: 3rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  font-style: italic;
+}
+
+/* ── Animations ── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes expandLine {
+  from { width: 0; opacity: 0; }
+  to   { width: 3rem; opacity: 0.6; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .link-container li a {
+    padding: 1.1rem 1.2rem;
+    font-size: 0.92rem;
+  }
+
+  .link-container li a:hover {
+    padding-left: 1.5rem;
+  }
+}
