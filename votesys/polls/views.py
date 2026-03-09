@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.urls import reverse
 from .models import Question, Choice, Comment, Reaction
+import json
 
 # def index(request):
 #   latest_question_list = Question.objects.order_by("-pub_date")[:5]
@@ -28,9 +29,23 @@ class IndexView(generic.ListView):
 #   model = Question
 #   template_name = "polls/detail.html"
 
-class ResultView(generic.DetailView):
-  model = Question
-  template_name = "polls/results.html"
+## -- temporary
+# class ResultView(generic.DetailView):
+#   model = Question
+#   template_name = "polls/results.html"
+
+def results(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    choices = question.choice_set.all()
+    total_votes = sum(c.votes for c in choices)
+
+    return render(request, 'polls/results.html', {
+        'question': question,
+        'choices': choices,
+        'total_votes': total_votes,
+        'chart_labels': json.dumps([c.choice_text for c in choices]),
+        'chart_votes': json.dumps([c.votes for c in choices]),
+    })
 
 @login_required
 def vote(request, question_id):

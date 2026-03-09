@@ -61,3 +61,14 @@ class Reaction(models.Model):
   def __str__(self):
     return f"{self.user.username} reacted {self.reaction_type} to '{self.question}'"
 
+class Vote(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='vote_records')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    voted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('question', 'user')  # one vote per user per poll
+
+    def __str__(self):
+        return f"{self.user.username} voted {self.choice.choice_text} on '{self.question}'"
