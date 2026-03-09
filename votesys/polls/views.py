@@ -4,11 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views import generic
-from .models import Question, Choice
 from django.utils import timezone
 from django.http import JsonResponse
 from django.urls import reverse
-from .models import Question, Choice, Comment, Reaction
+from .models import Question, Choice, Comment, Reaction, Vote
 import json
 
 # def index(request):
@@ -49,22 +48,42 @@ def results(request, pk):
 
 @login_required
 def vote(request, question_id):
-  question = get_object_or_404(Question, pk=question_id)
-  try:
-    selected_choice = question.choice_set.get(pk=request.POST["choice"])
-  except (KeyError, Choice.DoesNotExist):
-    return render(
-      request,
-      "polls/detail.html",
-      {
-        "question": question,
-        "error_message": "You didn't select a choice."
-      },
-    )
-  else:
-    selected_choice.votes = F("votes") + 1
-    selected_choice.save()
-    return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+    question = get_object_or_404(Question, pk=question_id)
+
+    # check if user already voted
+    if Vote.objects.filter(question=question, user=request.user).exists():
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': 'You have already voted on this poll.',
+            'comments': question.comments.order_by('-created_at'),
+            'reaction_choices': Reaction._meta.get_field('reaction_type').choices,
+            'reaction_counts': {
+                r[0]: question.reactions.filter(reaction_type=r[0]).count()
+                for r in Reaction._meta.get_field('reaction_type').choices
+            },
+        })
+
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': "You didn't select a choice.",
+            'comments': question.comments.order_by('-created_at'),
+            'reaction_choices': Reaction._meta.get_field('reaction_type').choices,
+            'reaction_counts': {
+                r[0]: question.reactions.filter(reaction_type=r[0]).count()
+                for r in Reaction._meta.get_field('reaction_type').choices
+            },
+        })
+    else:
+        selected_choice.votes = F('votes') + 1
+        selected_choice.save()
+
+        # record the vote
+        Vote.objects.create(question=question, user=request.user, choice=selected_choice)
+
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
   
 
 def share_poll(request, token):
@@ -122,16 +141,17 @@ def add_reaction(request, question_id):
 def detail(request, pk):
     question = get_object_or_404(Question, pk=pk)
     comments = question.comments.order_by('-created_at')
-    
     reaction_choices = Reaction._meta.get_field('reaction_type').choices
     reaction_counts = {
         r[0]: question.reactions.filter(reaction_type=r[0]).count()
         for r in reaction_choices
     }
+    user_has_voted = Vote.objects.filter(question=question, user=request.user).exists()
 
     return render(request, 'polls/detail.html', {
         'question': question,
         'comments': comments,
         'reaction_choices': reaction_choices,
         'reaction_counts': reaction_counts,
+        'user_has_voted': user_has_voted,
     })

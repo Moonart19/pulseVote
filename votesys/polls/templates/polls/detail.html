@@ -14,24 +14,33 @@
 
   <!-- ── VOTE FORM ── -->
   <div class="card vote-card">
-    <form action="{% url 'polls:vote' question.id %}" method="post">
-      {% csrf_token %}
-      <fieldset>
-        <legend>
-          <h1>{{ question.question_text }}</h1>
-        </legend>
-        {% if error_message %}
-          <p><strong>{{ error_message }}</strong></p>
-        {% endif %}
-        {% for choice in question.choice_set.all %}
-          <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-          <label for="choice{{ forloop.counter }}" class="choice-container">{{ choice.choice_text }}</label><br>
-        {% endfor %}
-      </fieldset>
-      <div class="btn-cont">
-        <input type="submit" value="Vote">
+    {% if user_has_voted %}
+      <h1 class="already-voted-title">{{ question.question_text }}</h1>
+      <div class="already-voted">
+        <span class="already-voted-icon">✓</span>
+        <p>You have already voted on this poll.</p>
+        <a href="{% url 'polls:results' question.id %}" class="btn-results">View Results →</a>
       </div>
-    </form>
+    {% else %}
+      <form action="{% url 'polls:vote' question.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+          <legend>
+            <h1>{{ question.question_text }}</h1>
+          </legend>
+          {% if error_message %}
+            <p><strong>{{ error_message }}</strong></p>
+          {% endif %}
+          {% for choice in question.choice_set.all %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+            <label for="choice{{ forloop.counter }}" class="choice-container">{{ choice.choice_text }}</label><br>
+          {% endfor %}
+        </fieldset>
+        <div class="btn-cont">
+          <input type="submit" value="Vote">
+        </div>
+      </form>
+    {% endif %}
   </div>
 
   <!-- ── SHARE ── -->
