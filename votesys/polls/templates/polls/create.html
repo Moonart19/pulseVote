@@ -1,0 +1,545 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Poll — VoteSys</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1: #05050f;
+      --glass: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.09);
+      --glass-hover: rgba(255,255,255,0.08);
+      --teal: #38d9c0;
+      --accent: #3dffa0;
+      --text-primary: #eeeaf8;
+      --text-secondary: #8a86a8;
+      --text-muted: #44405a;
+      --error: #f87171;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --transition: 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 3rem 1.25rem 4rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      color: var(--text-primary);
+      background-color: var(--bg-1);
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(179,154,42,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(56,217,192,0.12) 0%, transparent 60%);
+      background-attachment: fixed;
+    }
+
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+
+    body::before {
+      width: 500px; height: 500px;
+      background: rgba(124,109,245,0.12);
+      top: -100px; left: -100px;
+    }
+
+    body::after {
+      width: 400px; height: 400px;
+      background: rgba(56,217,192,0.10);
+      bottom: -80px; right: -80px;
+      animation-delay: -6s;
+      animation-direction: alternate-reverse;
+    }
+
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+      position: relative;
+      overflow: hidden;
+      animation: cardReveal 0.9s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #278191, #38d9c0, transparent);
+      opacity: 0.7;
+    }
+
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.2s; }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      margin-bottom: 20px;
+      transition: color var(--transition);
+    }
+
+    .back-link:hover { color: var(--teal); }
+
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .section-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+    }
+
+    .form-group { margin-bottom: 24px; }
+
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+    }
+
+    .form-input:focus {
+      border-color: rgba(61,255,160,0.3);
+      background: rgba(61,255,160,0.02);
+      box-shadow: 0 0 0 3px rgba(61,255,160,0.06);
+    }
+
+    .form-input::placeholder { color: var(--text-muted); }
+
+    /* ── Choices ── */
+    .choices-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .choice-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      animation: fadeUp 0.3s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .choice-row .form-input { flex: 1; }
+
+    .remove-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(248,113,113,0.2);
+      background: rgba(248,113,113,0.06);
+      color: var(--error);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .remove-btn:hover {
+      background: rgba(248,113,113,0.14);
+      box-shadow: 0 0 14px rgba(248,113,113,0.2);
+    }
+
+    .add-choice-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--transition);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .add-choice-btn:hover {
+      border-color: rgba(61,255,160,0.3);
+      color: var(--accent);
+      background: rgba(61,255,160,0.04);
+    }
+
+    /* ── Error ── */
+    .error-msg {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: var(--radius-sm);
+      color: var(--error);
+      font-size: 0.88rem;
+      margin-bottom: 20px;
+    }
+
+    .error-msg::before { content: '⚠'; }
+
+    /* ── Preview ── */
+    .preview-section { display: none; }
+    .preview-section.visible { display: block; }
+
+    .preview-question {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .preview-choice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .preview-choice::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .preview-expiry {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Actions ── */
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-preview {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .btn-preview:hover {
+      border-color: rgba(255,255,255,0.15);
+      color: var(--text-secondary);
+    }
+
+    .btn-submit {
+      background: rgba(61,255,160,0.1);
+      border: 1px solid rgba(61,255,160,0.25);
+      color: var(--accent);
+      flex: 2;
+      justify-content: center;
+    }
+
+    .btn-submit:hover {
+      background: rgba(61,255,160,0.18);
+      box-shadow: 0 0 24px rgba(61,255,160,0.2);
+      transform: translateY(-1px);
+    }
+
+    @keyframes cardReveal {
+      from { opacity:0; transform: translateY(30px) scale(0.97); filter: blur(4px); }
+      to   { opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(8px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(30px,20px) scale(1.1); }
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-1); }
+    ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+    @media (max-width: 480px) {
+      .card { border-radius: var(--radius-md); }
+      .form-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ── HEADER ── -->
+  <div class="card">
+    <a class="back-link" href="{% url 'polls:index' %}">← All Polls</a>
+    <h1 class="page-title">Create a Poll</h1>
+    <p class="page-subtitle">Ask anything — your poll goes live instantly</p>
+  </div>
+
+  <!-- ── FORM ── -->
+  <div class="card">
+    {% if errors %}
+      <div class="error-msg">{{ errors }}</div>
+    {% endif %}
+
+    <form method="post" id="poll-form">
+      {% csrf_token %}
+
+      <!-- Question -->
+      <div class="form-group">
+        <p class="section-label">Question</p>
+        <input
+          type="text"
+          name="question_text"
+          class="form-input"
+          id="question-input"
+          placeholder="Ask a question..."
+          value="{{ form.question_text.value|default:'' }}"
+          required
+        />
+      </div>
+
+      <!-- Choices -->
+      <div class="form-group">
+        <p class="section-label">Choices <span style="color: var(--text-muted); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: none; font-family: 'DM Sans';">(min. 2)</span></p>
+        <div class="choices-list" id="choices-list">
+          <div class="choice-row">
+            <input type="text" name="choices" class="form-input" placeholder="Choice 1" value="{{ prev_choices.0|default:'' }}">
+            <button type="button" class="remove-btn" onclick="removeChoice(this)" style="visibility:hidden">×</button>
+          </div>
+          <div class="choice-row">
+            <input type="text" name="choices" class="form-input" placeholder="Choice 2" value="{{ prev_choices.1|default:'' }}">
+            <button type="button" class="remove-btn" onclick="removeChoice(this)" style="visibility:hidden">×</button>
+          </div>
+        </div>
+        <button type="button" class="add-choice-btn" onclick="addChoice()">+ Add Choice</button>
+      </div>
+
+      <!-- Expiry date -->
+      <div class="form-group">
+        <p class="section-label">Expiry Date <span style="color: var(--text-muted); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: none; font-family: 'DM Sans';">(optional)</span></p>
+        <input
+          type="datetime-local"
+          name="expiry_date"
+          class="form-input"
+          id="expiry-input"
+          value="{{ form.expiry_date.value|default:'' }}"
+        />
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-preview" onclick="togglePreview()">Preview</button>
+        <button type="submit" class="btn btn-submit">Publish Poll →</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ── PREVIEW ── -->
+  <div class="card preview-section" id="preview-card">
+    <p class="section-label">Preview</p>
+    <div id="preview-question" class="preview-question">Your question will appear here</div>
+    <div id="preview-choices"></div>
+    <div id="preview-expiry" class="preview-expiry" style="display:none">
+      ⏱ Expires: <span id="preview-expiry-text"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let choiceCount = 2;
+
+  function addChoice() {
+    choiceCount++;
+    const list = document.getElementById('choices-list');
+    const row = document.createElement('div');
+    row.className = 'choice-row';
+    row.innerHTML = `
+      <input type="text" name="choices" class="form-input" placeholder="Choice ${choiceCount}">
+      <button type="button" class="remove-btn" onclick="removeChoice(this)">×</button>
+    `;
+    list.appendChild(row);
+    updateRemoveButtons();
+    row.querySelector('input').focus();
+  }
+
+  function removeChoice(btn) {
+    btn.closest('.choice-row').remove();
+    choiceCount--;
+    updateRemoveButtons();
+    updatePreview();
+  }
+
+  function updateRemoveButtons() {
+    const rows = document.querySelectorAll('.choice-row');
+    rows.forEach((row, i) => {
+      const btn = row.querySelector('.remove-btn');
+      btn.style.visibility = rows.length > 2 ? 'visible' : 'hidden';
+    });
+  }
+
+  function togglePreview() {
+    updatePreview();
+    const card = document.getElementById('preview-card');
+    card.classList.toggle('visible');
+    const btn = document.querySelector('.btn-preview');
+    btn.innerText = card.classList.contains('visible') ? 'Hide Preview' : 'Preview';
+    if (card.classList.contains('visible')) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function updatePreview() {
+    const question = document.getElementById('question-input').value || 'Your question will appear here';
+    document.getElementById('preview-question').innerText = question;
+
+    const choiceInputs = document.querySelectorAll('input[name="choices"]');
+    const container = document.getElementById('preview-choices');
+    container.innerHTML = '';
+    choiceInputs.forEach(input => {
+      if (input.value.trim()) {
+        const div = document.createElement('div');
+        div.className = 'preview-choice';
+        div.innerText = input.value.trim();
+        container.appendChild(div);
+      }
+    });
+
+    const expiry = document.getElementById('expiry-input').value;
+    const expiryRow = document.getElementById('preview-expiry');
+    if (expiry) {
+      expiryRow.style.display = 'flex';
+      document.getElementById('preview-expiry-text').innerText = new Date(expiry).toLocaleString();
+    } else {
+      expiryRow.style.display = 'none';
+    }
+  }
+
+  // Live preview update as user types
+  document.getElementById('question-input').addEventListener('input', updatePreview);
+  document.getElementById('expiry-input').addEventListener('input', updatePreview);
+  document.querySelectorAll('input[name="choices"]').forEach(input => {
+    input.addEventListener('input', updatePreview);
+  });
+
+  // Delegate live update to dynamically added choice inputs
+  document.getElementById('choices-list').addEventListener('input', updatePreview);
+</script>
+
+</body>
+</html>

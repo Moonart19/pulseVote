@@ -17,4 +17,5 @@ urlpatterns = [
   path('share/<uuid:token>/', views.share_poll, name='share'),
   path('<int:question_id>/comment/', views.add_comment, name='add_comment'),
   path('<int:question_id>/react/', views.add_reaction, name='add_reaction'),
+  path('create/', views.create_poll, name='create'),
 ]

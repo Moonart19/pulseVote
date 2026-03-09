@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.urls import reverse
 from .models import Question, Choice, Comment, Reaction, Vote
+from .forms import CreatePollForm
 import json
 
 # def index(request):
@@ -50,6 +51,19 @@ def results(request, pk):
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
 
+    # check if poll is expired
+    if question.is_expired():
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': 'This poll has expired and is no longer accepting votes.',
+            'comments': question.comments.order_by('-created_at'),
+            'reaction_choices': Reaction._meta.get_field('reaction_type').choices,
+            'reaction_counts': {
+                r[0]: question.reactions.filter(reaction_type=r[0]).count()
+                for r in Reaction._meta.get_field('reaction_type').choices
+            },
+        })
+
     # check if user already voted
     if Vote.objects.filter(question=question, user=request.user).exists():
         return render(request, 'polls/detail.html', {
@@ -79,10 +93,7 @@ def vote(request, question_id):
     else:
         selected_choice.votes = F('votes') + 1
         selected_choice.save()
-
-        # record the vote
         Vote.objects.create(question=question, user=request.user, choice=selected_choice)
-
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
   
 
@@ -155,3 +166,29 @@ def detail(request, pk):
         'reaction_counts': reaction_counts,
         'user_has_voted': user_has_voted,
     })
+
+@login_required
+def create_poll(request):
+    if request.method == 'POST':
+        form = CreatePollForm(request.POST)
+        choices = [v.strip() for v in request.POST.getlist('choices') if v.strip()]
+
+        if form.is_valid() and len(choices) >= 2:
+            question = Question.objects.create(
+                question_text=form.cleaned_data['question_text'],
+                pub_date=timezone.now(),
+                expiry_date=form.cleaned_data.get('expiry_date'),
+                created_by=request.user,
+            )
+            for choice_text in choices:
+                Choice.objects.create(question=question, choice_text=choice_text)
+
+            return redirect('polls:detail', pk=question.pk)
+
+        return render(request, 'polls/create.html', {
+            'form': form,
+            'errors': 'Please enter a question and at least 2 choices.',
+            'prev_choices': request.POST.getlist('choices'),
+        })
+
+    return render(request, 'polls/create.html', {'form': CreatePollForm()})
