@@ -1,30 +1,195 @@
+{% load polls_extras %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {% load static %}
   <link rel="stylesheet" href="{% static 'polls/detail_style.css' %}">
-  <title>Detail</title>
+  <title>{{ question.question_text }}</title>
 </head>
 <body>
-  <form action="{% url 'polls:vote' question.id %}" method="post">
-    {% csrf_token %}
-    <fieldset>
-      <legend>
-        <h1>{{ question.question_text }}</h1>
-      </legend>
-      {% if error_message %}
-        <p><strong>{{ error_message }}</strong></p>
-      {% endif %}
-      {% for choice in question.choice_set.all %}
-        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-        <label for="choice{{ forloop.counter }}" class="choice-container">{{ choice.choice_text }}</label><br>
-      {% endfor %}
-    </fieldset>
-    <div class="btn-cont">
-      <input type="submit" value="Vote">
-    </div>
+
+<div class="page-wrapper">
+
+  <!-- ── VOTE FORM ── -->
+  <div class="card vote-card">
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+      {% csrf_token %}
+      <fieldset>
+        <legend>
+          <h1>{{ question.question_text }}</h1>
+        </legend>
+        {% if error_message %}
+          <p><strong>{{ error_message }}</strong></p>
+        {% endif %}
+        {% for choice in question.choice_set.all %}
+          <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+          <label for="choice{{ forloop.counter }}" class="choice-container">{{ choice.choice_text }}</label><br>
+        {% endfor %}
+      </fieldset>
+      <div class="btn-cont">
+        <input type="submit" value="Vote">
+      </div>
     </form>
+  </div>
+
+  <!-- ── SHARE ── -->
+  <div class="card share-card">
+    <p class="section-label">Share this poll</p>
+    <div class="share-input-row">
+      <input
+        id="share-url"
+        type="text"
+        class="share-input"
+        value="{{ request.scheme }}://{{ request.get_host }}{% url 'polls:share' question.share_token %}"
+        readonly
+      />
+      <button class="copy-btn" onclick="copyLink(event)">Copy</button>
+    </div>
+  </div>
+
+  <!-- ── REACTIONS ── -->
+  <div class="card reactions-card">
+    <p class="section-label">Reactions</p>
+    <div class="reactions-grid" id="reactions-grid">
+      {% for value, label in reaction_choices %}
+      <button
+        class="reaction-btn"
+        data-reaction="{{ value }}"
+        type="button"
+        onclick="sendReaction('{{ value }}')"
+      >
+        {{ label }}
+        <span class="reaction-count" id="count-{{ value }}">{{ reaction_counts|get_item:value }}</span>
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ── COMMENTS ── -->
+  <div class="card comments-card">
+    <p class="section-label">Comments · <span id="comment-count">{{ comments.count }}</span></p>
+
+    <div class="comment-form">
+      <form id="comment-form">
+        {% csrf_token %}
+        <textarea
+          class="comment-textarea"
+          id="comment-text"
+          name="text"
+          placeholder="Share your thoughts..."
+          rows="3"
+        ></textarea>
+        <button class="comment-submit" type="submit">Post Comment</button>
+      </form>
+    </div>
+
+    <div class="comment-list" id="comment-list">
+      {% for comment in comments %}
+      <div class="comment-item">
+        <div class="comment-header">
+          <span class="comment-author">{{ comment.user.username }}</span>
+          <span class="comment-time">{{ comment.created_at|timesince }} ago</span>
+        </div>
+        <p class="comment-text">{{ comment.text }}</p>
+      </div>
+      {% empty %}
+      <p class="no-comments" id="no-comments-msg">No comments yet — be the first!</p>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+<script>
+  
+  function copyLink(e) {
+    const input = document.getElementById('share-url');
+    navigator.clipboard.writeText(input.value);
+    e.target.innerText = 'Copied!';
+    setTimeout(() => e.target.innerText = 'Copy', 2000);
+  }
+
+    document.getElementById('comment-form').addEventListener('submit', function(e) {
+    e.preventDefault();  // stop page refresh
+
+    const text = document.getElementById('comment-text').value.trim();
+    if (!text) return;
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch("{% url 'polls:add_comment' question.id %}", {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrfToken,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `text=${encodeURIComponent(text)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        // clear textarea
+        document.getElementById('comment-text').value = '';
+
+        // remove "no comments" message if present
+        const noMsg = document.getElementById('no-comments-msg');
+        if (noMsg) noMsg.remove();
+
+        // build new comment HTML and add to top of list
+        const list = document.getElementById('comment-list');
+        const div = document.createElement('div');
+        div.className = 'comment-item';
+        div.style.animation = 'cardReveal 0.4s cubic-bezier(.16,1,.3,1) both';
+        div.innerHTML = `
+          <div class="comment-header">
+            <span class="comment-author">${data.username}</span>
+            <span class="comment-time">just now</span>
+          </div>
+          <p class="comment-text">${data.text}</p>
+        `;
+        list.prepend(div);
+
+        // update comment count
+        const count = document.getElementById('comment-count');
+        count.innerText = parseInt(count.innerText) + 1;
+      }
+    });
+  });
+
+    function sendReaction(reactionType) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch("{% url 'polls:add_reaction' question.id %}", {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrfToken,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `reaction_type=${encodeURIComponent(reactionType)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        // update all counts
+        Object.entries(data.counts).forEach(([key, count]) => {
+          const el = document.getElementById(`count-${key}`);
+          if (el) el.innerText = count;
+        });
+
+        // highlight active reaction button
+        document.querySelectorAll('.reaction-btn').forEach(btn => {
+          btn.classList.remove('reaction-active');
+        });
+        if (data.action !== 'removed') {
+          const activeBtn = document.querySelector(`[data-reaction="${data.reaction_type}"]`);
+          if (activeBtn) activeBtn.classList.add('reaction-active');
+        }
+      }
+    });
+  }
+</script>
+
 </body>
 </html>

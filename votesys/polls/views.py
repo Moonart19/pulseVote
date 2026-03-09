@@ -1,11 +1,14 @@
 from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views import generic
 from .models import Question, Choice
 from django.utils import timezone
+from django.http import JsonResponse
+from django.urls import reverse
+from .models import Question, Choice, Comment, Reaction
 
 # def index(request):
 #   latest_question_list = Question.objects.order_by("-pub_date")[:5]
@@ -20,20 +23,10 @@ class IndexView(generic.ListView):
     """Return the last five published questions."""
     return Question.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")[:20]
 
-# def detail(request, question_id):
-#   question = get_object_or_404(Question, pk=question_id)
-#   return render(request, "polls/detail.html", {"question": question})
-
-class DetailView(generic.DetailView):
-  model = Question
-  template_name = "polls/detail.html"
-
-  def get_queryset(self):
-    return Question.objects.filter(pub_date__lte=timezone.now())
-
-# def results(request, question_id):
-#   question = get_object_or_404(Question, pk=question_id)
-#   return render(request, "polls/results.html", {"question": question})
+## -- temporary
+# class DetailView(generic.DetailView):
+#   model = Question
+#   template_name = "polls/detail.html"
 
 class ResultView(generic.DetailView):
   model = Question
@@ -57,4 +50,73 @@ def vote(request, question_id):
     selected_choice.votes = F("votes") + 1
     selected_choice.save()
     return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+  
 
+def share_poll(request, token):
+    # resolves /polls/share/<token>/ to the correct poll
+    question = get_object_or_404(Question, share_token=token)
+    return redirect('polls:detail', pk=question.pk)
+
+
+@login_required
+def add_comment(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.method == 'POST':
+        text = request.POST.get('text', '').strip()
+        if text:
+            comment = Comment.objects.create(question=question, user=request.user, text=text)
+            return JsonResponse({
+                'success': True,
+                'username': comment.user.username,
+                'text': comment.text,
+                'time': 'just now'
+            })
+    return JsonResponse({'success': False, 'error': 'Empty comment'})
+
+@login_required
+def add_reaction(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.method == 'POST':
+        reaction_type = request.POST.get('reaction_type')
+        valid = [r[0] for r in Reaction._meta.get_field('reaction_type').choices]
+
+        if reaction_type in valid:
+            existing = Reaction.objects.filter(question=question, user=request.user).first()
+            if existing:
+                if existing.reaction_type == reaction_type:
+                    existing.delete()
+                    action = 'removed'
+                else:
+                    existing.reaction_type = reaction_type
+                    existing.save()
+                    action = 'switched'
+            else:
+                Reaction.objects.create(question=question, user=request.user, reaction_type=reaction_type)
+                action = 'added'
+
+            # return updated counts for all reactions
+            counts = {
+                r[0]: question.reactions.filter(reaction_type=r[0]).count()
+                for r in Reaction._meta.get_field('reaction_type').choices
+            }
+            return JsonResponse({'success': True, 'action': action, 'counts': counts, 'reaction_type': reaction_type})
+
+    return JsonResponse({'success': False})
+
+
+def detail(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    comments = question.comments.order_by('-created_at')
+    
+    reaction_choices = Reaction._meta.get_field('reaction_type').choices
+    reaction_counts = {
+        r[0]: question.reactions.filter(reaction_type=r[0]).count()
+        for r in reaction_choices
+    }
+
+    return render(request, 'polls/detail.html', {
+        'question': question,
+        'comments': comments,
+        'reaction_choices': reaction_choices,
+        'reaction_counts': reaction_counts,
+    })
