@@ -1,6 +1,5 @@
 import datetime
 import uuid
-
 from django.db import models
 from django.utils import timezone
 from django.contrib import admin
@@ -16,11 +15,6 @@ class Question(models.Model):
   def __str__(self):
     return self.question_text
 
-  def is_expired(self):
-    if self.expiry_date:
-      return timezone.now() > self.expiry_date
-    return False
-
   @admin.display(
     boolean=True,
     ordering="pub_date",
@@ -33,8 +27,6 @@ class Question(models.Model):
     return now - datetime.timedelta(days=1) <= self.pub_date <= now
 
 class Choice(models.Model):
-  # we use many-one relationship (many choice has only one question)
-  # the on_delete is used for safety instruction if question not there no choices
   question = models.ForeignKey(Question, on_delete=models.CASCADE)
   choice_text = models.CharField(max_length=200)
   votes = models.IntegerField(default=0)

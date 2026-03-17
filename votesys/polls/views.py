@@ -6,15 +6,9 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.http import JsonResponse
-from django.urls import reverse
 from .models import Question, Choice, Comment, Reaction, Vote
 from .forms import CreatePollForm
 import json
-
-# def index(request):
-#   latest_question_list = Question.objects.order_by("-pub_date")[:5]
-#   context = {"latest_question_list" : latest_question_list}
-#   return render(request, "polls/index.html", context)
 
 class IndexView(generic.ListView):
   template_name = "polls/index.html"
@@ -23,16 +17,6 @@ class IndexView(generic.ListView):
   def get_queryset(self):
     """Return the last five published questions."""
     return Question.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")[:20]
-
-## -- temporary
-# class DetailView(generic.DetailView):
-#   model = Question
-#   template_name = "polls/detail.html"
-
-## -- temporary
-# class ResultView(generic.DetailView):
-#   model = Question
-#   template_name = "polls/results.html"
 
 def results(request, pk):
     question = get_object_or_404(Question, pk=pk)
@@ -50,19 +34,6 @@ def results(request, pk):
 @login_required
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-
-    # check if poll is expired
-    if question.is_expired():
-        return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': 'This poll has expired and is no longer accepting votes.',
-            'comments': question.comments.order_by('-created_at'),
-            'reaction_choices': Reaction._meta.get_field('reaction_type').choices,
-            'reaction_counts': {
-                r[0]: question.reactions.filter(reaction_type=r[0]).count()
-                for r in Reaction._meta.get_field('reaction_type').choices
-            },
-        })
 
     # check if user already voted
     if Vote.objects.filter(question=question, user=request.user).exists():
@@ -177,7 +148,6 @@ def create_poll(request):
             question = Question.objects.create(
                 question_text=form.cleaned_data['question_text'],
                 pub_date=timezone.now(),
-                expiry_date=form.cleaned_data.get('expiry_date'),
                 created_by=request.user,
             )
             for choice_text in choices:
