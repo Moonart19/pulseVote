@@ -9,10 +9,3 @@ class CreatePollForm(forms.Form):
             'id': 'question-input',
         })
     )
-    expiry_date = forms.DateTimeField(
-        required=False,
-        widget=forms.DateTimeInput(attrs={
-            'class': 'form-input',
-            'id': 'expiry-input',
-        })
-    )

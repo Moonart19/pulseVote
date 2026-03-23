@@ -1,204 +1,240 @@
+/* ============================================
+   PULSEVOTE — Login & Register Light Theme
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
 :root {
-  --bg: #070b14;
-  --surface: rgba(255,255,255,0.04);
-  --border: rgba(255,255,255,0.08);
-  --accent:#EAE0D5;
-  --accent2: #00c8ff;
-  --gold: #f0c060;
-  --text: #e8eef5;
-  --muted: #6b7a8d;
-  --card-bg: rgba(12,20,36,0.7);
-  --error: #e74c3c;
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface-2: #f2f0eb;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.14);
+  --text: #1a1814;
+  --text-2: #4a4540;
+  --text-muted: #8a8480;
+  --teal: #0d9488;
+  --teal-light: rgba(13,148,136,0.1);
+  --green: #16a34a;
+  --red: #dc2626;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.06);
+  --radius-lg: 24px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-full: 100px;
+  --transition: 0.35s cubic-bezier(0.16,1,0.3,1);
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'DM Sans', sans-serif;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  padding: 24px;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 10% 20%, rgba(13,148,136,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 90% 80%, rgba(217,119,6,0.04) 0%, transparent 60%);
 }
 
-/* Background mesh */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,200,255,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 80% 80%, rgba(61,255,160,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(240,192,96,0.03) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Grain overlay */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.4;
-}
-
+/* ── Card ── */
 .card {
-  position: relative;
-  z-index: 1;
   width: 100%;
   max-width: 440px;
-  margin: 24px;
-  background: rgba(12, 20, 36, 0.75);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 52px 44px;
-  animation: fadeUp 0.8s cubic-bezier(.16,1,.3,1) both;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
 }
 
-/* top glow line */
+/* Top teal line */
 .card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 50%;
+  top: 0; left: 50%;
   transform: translateX(-50%);
-  width: 60%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(61,255,160,0.5), transparent);
-  border-radius: 1px;
+  width: 50%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--teal), transparent);
 }
 
+/* ── Brand ── */
 .brand {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
 .brand-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
   font-weight: 900;
   letter-spacing: -0.5px;
   color: var(--text);
 }
 
-.brand-logo span { color: var(--accent); }
+.brand-logo span { color: var(--teal); }
 
 .brand-tagline {
-  font-size: 0.75rem;
-  color: var(--muted);
-  letter-spacing: 0.15em;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 5px;
 }
 
+/* ── Heading ── */
 h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
   font-weight: 700;
+  letter-spacing: -0.03em;
   margin-bottom: 6px;
-  letter-spacing: -0.5px;
+  color: var(--text);
 }
 
 .subtitle {
   font-size: 0.88rem;
-  color: var(--muted);
+  color: var(--text-muted);
   font-weight: 300;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
-/* Django form fields */
-.form-group {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+/* ── Badge (register page) ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--teal-light);
+  border: 1px solid rgba(13,148,136,0.2);
+  border-radius: var(--radius-full);
+  padding: 5px 14px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
+  color: var(--teal);
+  margin-bottom: 16px;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="email"] {
+.badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 6px rgba(13,148,136,0.5);
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.75); }
+}
+
+/* ── Django form.as_p ── */
+form p {
+  margin-bottom: 18px;
+}
+
+form p label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 7px;
+}
+
+form p input[type="text"],
+form p input[type="password"],
+form p input[type="email"] {
   width: 100%;
-  padding: 13px 16px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.95rem;
-  font-weight: 400;
+  font-weight: 300;
   outline: none;
-  transition: all 0.25s ease;
+  transition: all var(--transition);
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus {
-  border-color: rgba(61,255,160,0.35);
-  background: rgba(61,255,160,0.04);
-  box-shadow: 0 0 0 3px rgba(61,255,160,0.08);
+form p input:focus {
+  border-color: rgba(13,148,136,0.4);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
 }
 
-input::placeholder { color: rgba(107,122,141,0.5); }
+form p input::placeholder { color: var(--text-muted); }
 
-/* Django renders form errors as <ul class="errorlist"> */
+/* Help text */
+form p span,
+.helptext {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+/* Error list */
 .errorlist {
   list-style: none;
-  margin-top: 6px;
+  margin-top: 5px;
 }
 
 .errorlist li {
   font-size: 0.78rem;
-  color: var(--error);
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  color: var(--red);
 }
 
-.errorlist li::before { content: '⚠'; font-size: 0.7rem; }
+.errorlist li::before { content: '⚠ '; }
 
+/* ── Submit button ── */
 .submit-btn {
   width: 100%;
-  padding: 14px;
-  margin-top: 8px;
-  background: var(--accent);
-  color: #070b14;
+  padding: 13px;
+  margin-top: 6px;
+  background: var(--teal);
+  color: #fff;
   border: none;
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(.16,1,.3,1);
+  transition: all var(--transition);
+  box-shadow: 0 4px 14px rgba(13,148,136,0.3);
   letter-spacing: 0.02em;
 }
 
 .submit-btn:hover {
+  background: #0f766e;
   transform: translateY(-2px);
-  box-shadow: 0 0 32px rgba(61,255,160,0.4), 0 8px 24px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 20px rgba(13,148,136,0.4);
 }
 
 .submit-btn:active { transform: translateY(0); }
 
+/* ── Divider ── */
 .divider {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 28px 0;
+  margin: 24px 0;
 }
 
 .divider-line {
@@ -209,43 +245,40 @@ input::placeholder { color: rgba(107,122,141,0.5); }
 
 .divider-text {
   font-size: 0.72rem;
-  color: var(--muted);
+  color: var(--text-muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
+/* ── Footer link ── */
 .footer-link {
   text-align: center;
   font-size: 0.88rem;
-  color: var(--muted);
+  color: var(--text-muted);
   font-weight: 300;
 }
 
 .footer-link a {
-  color: var(--accent);
+  color: var(--teal);
   text-decoration: none;
   font-weight: 500;
-  transition: opacity 0.2s;
+  transition: opacity var(--transition);
 }
 
 .footer-link a:hover { opacity: 0.75; }
 
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+
+/* ── Animation ── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
+  from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Django wraps each field in a <p> by default when using form.as_p */
-form p {
-  margin-bottom: 20px;
-}
-
-form p label {
-  display: block;
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .card { padding: 36px 24px; border-radius: var(--radius-md); }
 }

@@ -1,43 +1,48 @@
 /* ============================================
-   POLLS — Premium CSS
-   Aesthetic: Dark luxury editorial
+   POLLS INDEX — Light Editorial Theme
+   Matching PulseVote Light Design System
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-/* ── CSS Variables ── */
+/* ── Variables ── */
 :root {
-  --bg: #0c0c0f;
-  --surface: #13131a;
-  --surface-2: #1c1c28;
-  --border: rgba(255, 255, 255, 0.07);
-  --border-hover: rgba(255, 200, 100, 0.35);
-  --gold: #d4a84b;
-  --gold-light: #f0c96a;
-  --gold-glow: rgba(212, 168, 75, 0.15);
-  --text-primary: #f0ece4;
-  --text-secondary: #8a8799;
-  --text-muted: #4a4859;
-  --accent: #d4a84b;
-  --radius: 2px;
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface-2: #f2f0eb;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.14);
+  --text: #1a1814;
+  --text-2: #4a4540;
+  --text-muted: #8a8480;
+  --teal: #0d9488;
+  --teal-light: rgba(13,148,136,0.1);
+  --teal-glow: rgba(13,148,136,0.2);
+  --green: #16a34a;
+  --green-light: rgba(22,163,74,0.1);
+  --amber: #d97706;
+  --red: #dc2626;
+  --red-light: rgba(220,38,38,0.08);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.06);
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  --radius-full: 100px;
   --transition: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'DM Sans', sans-serif;
 }
 
-/* ── Reset & Base ── */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+/* ── Reset ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
-  background-color: var(--bg);
-  color: var(--text-primary);
-  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
   font-weight: 300;
   min-height: 100vh;
   overflow-x: hidden;
@@ -45,61 +50,51 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 0 1.5rem 4rem;
-
-  /* Subtle noise texture */
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 168, 75, 0.08), transparent),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  background-attachment: fixed;
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(13,148,136,0.05), transparent),
+    radial-gradient(ellipse 50% 50% at 90% 90%, rgba(217,119,6,0.04), transparent);
 }
 
 /* ── Page Header ── */
 h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
-  font-size: clamp(2.2rem, 6vw, 4rem);
-  letter-spacing: 0.04em;
-  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.03em;
+  color: var(--text);
   text-align: center;
-  margin-top: clamp(3rem, 8vh, 6rem);
+  margin-top: clamp(3rem, 8vh, 5rem);
   margin-bottom: 0.5rem;
   line-height: 1.1;
-  animation: fadeDown 0.9s var(--transition) both;
-
-  /* Subtle shimmer on the title */
-  background: linear-gradient(135deg, #f0ece4 30%, var(--gold-light) 60%, #f0ece4 80%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: fadeDown 0.9s var(--transition) both, shimmer 5s linear 1s infinite;
+  animation: fadeDown 0.8s var(--transition) both;
+  position: relative;
 }
 
 h1::after {
   content: '';
   display: block;
   width: 3rem;
-  height: 1px;
-  background: var(--gold);
-  margin: 1rem auto 0;
-  opacity: 0.6;
-  animation: expandLine 1s var(--transition) 0.3s both;
+  height: 3px;
+  background: var(--teal);
+  border-radius: var(--radius-full);
+  margin: 0.75rem auto 0;
+  animation: expandLine 0.8s var(--transition) 0.3s both;
 }
 
 /* ── Home Link ── */
 h2 {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 300;
+  font-family: var(--font-body);
+  font-weight: 400;
   font-size: 0.78rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   text-align: center;
-  margin-bottom: clamp(2.5rem, 6vh, 4.5rem);
-  animation: fadeUp 0.8s var(--transition) 0.3s both;
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+  animation: fadeUp 0.8s var(--transition) 0.2s both;
 }
 
 .home-page {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   text-decoration: none;
   position: relative;
   padding-bottom: 2px;
@@ -109,27 +104,57 @@ h2 {
 .home-page::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--gold);
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--teal);
   transition: width var(--transition);
 }
 
-.home-page:hover {
-  color: var(--gold-light);
+.home-page:hover { color: var(--teal); }
+.home-page:hover::after { width: 100%; }
+
+/* ── Action row (create button + title area) ── */
+.action-row {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+  animation: fadeUp 0.8s var(--transition) 0.35s both;
 }
 
-.home-page:hover::after {
-  width: 100%;
+/* ── Create Poll Button ── */
+.create-poll-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  background: var(--green-light);
+  border: 1px solid rgba(22,163,74,0.25);
+  border-radius: var(--radius-full);
+  color: var(--green);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.create-poll-btn:hover {
+  background: var(--green);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(22,163,74,0.3);
 }
 
 /* ── Container ── */
 .container {
   width: 100%;
   max-width: 680px;
-  animation: fadeUp 0.9s var(--transition) 0.5s both;
+  animation: fadeUp 0.9s var(--transition) 0.4s both;
 }
 
 /* ── Poll List ── */
@@ -138,14 +163,11 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 0;
-  border: 1px solid var(--border);
   background: var(--surface);
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.03),
-    0 20px 60px rgba(0, 0, 0, 0.5),
-    0 0 80px var(--gold-glow);
+  box-shadow: var(--shadow-lg);
 }
 
 .link-container li {
@@ -155,29 +177,26 @@ h2 {
   animation: slideIn 0.5s var(--transition) both;
 }
 
-/* Stagger each list item */
-.link-container li:nth-child(1) { animation-delay: 0.55s; }
-.link-container li:nth-child(2) { animation-delay: 0.65s; }
-.link-container li:nth-child(3) { animation-delay: 0.75s; }
-.link-container li:nth-child(4) { animation-delay: 0.85s; }
-.link-container li:nth-child(5) { animation-delay: 0.95s; }
-.link-container li:nth-child(n+6) { animation-delay: 1.05s; }
+.link-container li:nth-child(1) { animation-delay: 0.45s; }
+.link-container li:nth-child(2) { animation-delay: 0.52s; }
+.link-container li:nth-child(3) { animation-delay: 0.59s; }
+.link-container li:nth-child(4) { animation-delay: 0.66s; }
+.link-container li:nth-child(5) { animation-delay: 0.73s; }
+.link-container li:nth-child(n+6) { animation-delay: 0.80s; }
 
-.link-container li:last-child {
-  border-bottom: none;
-}
+.link-container li:last-child { border-bottom: none; }
 
+/* Left accent line */
 .link-container li::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--gold);
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--teal);
   transform: scaleY(0);
   transform-origin: bottom;
   transition: transform var(--transition);
+  border-radius: 0 2px 2px 0;
 }
 
 .link-container li:hover::before {
@@ -185,24 +204,31 @@ h2 {
   transform-origin: top;
 }
 
-.link-container li:hover {
-  background: var(--surface-2);
-}
+.link-container li:hover { background: var(--surface-2); }
 
-.link-container li a {
+/* ── Poll item layout ── */
+.poll-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.3rem 1.8rem;
-  color: var(--text-primary);
+  padding: 1.2rem 1.6rem;
+  gap: 12px;
+}
+
+.poll-item a {
+  color: var(--text);
   text-decoration: none;
-  font-size: 0.98rem;
+  font-size: 0.97rem;
   font-weight: 400;
   letter-spacing: 0.01em;
   transition: color var(--transition), padding-left var(--transition);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.link-container li a::after {
+.poll-item a::after {
   content: '→';
   font-size: 0.9rem;
   color: var(--text-muted);
@@ -211,14 +237,36 @@ h2 {
   margin-left: 1rem;
 }
 
-.link-container li a:hover {
-  color: var(--gold-light);
-  padding-left: 2.2rem;
+.poll-item a:hover { color: var(--teal); padding-left: 6px; }
+.poll-item a:hover::after { color: var(--teal); transform: translateX(4px); }
+
+/* ── Expiry tags ── */
+.expired-tag {
+  font-size: 0.68rem;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: var(--red-light);
+  border: 1px solid rgba(220,38,38,0.15);
+  color: var(--red);
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.link-container li a:hover::after {
-  color: var(--gold);
-  transform: translateX(4px);
+.expiry-tag {
+  font-size: 0.68rem;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(217,119,6,0.08);
+  border: 1px solid rgba(217,119,6,0.15);
+  color: var(--amber);
+  font-family: var(--font-body);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ── Empty State ── */
@@ -226,53 +274,42 @@ h2 {
   text-align: center;
   color: var(--text-muted);
   font-size: 0.9rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   padding: 3rem 1rem;
-  border: 1px dashed var(--border);
-  border-radius: 8px;
-  font-style: italic;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
 }
 
 /* ── Animations ── */
 @keyframes fadeDown {
-  from { opacity: 0; transform: translateY(-18px); }
+  from { opacity: 0; transform: translateY(-16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-12px); }
+  from { opacity: 0; transform: translateX(-10px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes expandLine {
   from { width: 0; opacity: 0; }
-  to   { width: 3rem; opacity: 0.6; }
-}
-
-@keyframes shimmer {
-  0%   { background-position: 200% center; }
-  100% { background-position: -200% center; }
+  to   { width: 3rem; opacity: 1; }
 }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal); }
 
 /* ── Responsive ── */
 @media (max-width: 480px) {
-  .link-container li a {
-    padding: 1.1rem 1.2rem;
-    font-size: 0.92rem;
-  }
-
-  .link-container li a:hover {
-    padding-left: 1.5rem;
-  }
+  .poll-item { padding: 1rem 1.2rem; }
+  .poll-item a { font-size: 0.92rem; }
 }
